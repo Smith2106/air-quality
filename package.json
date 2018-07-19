@@ -4,9 +4,7 @@
   "description": "A website to review airports all over the world.",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "rimraf dist/ && babel ./ --out-dir dist/ --ignore ./node_modeles,./babelrc,./package.json,./npm-debut.log --copy-files",
-    "start": "npm run build && node dist/app.js"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
