@@ -1,3 +1,5 @@
+<% include partials/header %>
+
 <h1>This is the airports page!</h1>
 
 <% airports.forEach(airport => { %>
@@ -6,3 +8,5 @@
         <img src="<%= airport.image %>" alt="Airport picture">
     </div>
 <% }); %>
+
+<% include partials/footer %>
