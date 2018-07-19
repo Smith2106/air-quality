@@ -1,0 +1,8 @@
+<h1>This is the airports page!</h1>
+
+<% airports.forEach(airport => { %>
+    <div>
+        <h4><%= airport.name %></h4>
+        <img src="<%= airport.image %>" alt="Airport picture">
+    </div>
+<% }); %>
