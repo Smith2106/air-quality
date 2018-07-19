@@ -1,0 +1,32 @@
+{
+  "name": "air-quality",
+  "version": "1.0.0",
+  "description": "A website to review airports all over the world.",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "rimraf dist/ && babel ./ --out-dir dist/ --ignore ./node_modeles,./babelrc,./package.json,./npm-debut.log --copy-files",
+    "start": "npm run build && node dist/app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Smith2106/air-quality.git"
+  },
+  "author": "Elijah Smith",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Smith2106/air-quality/issues"
+  },
+  "homepage": "https://github.com/Smith2106/air-quality#readme",
+  "dependencies": {
+    "ejs": "^2.6.1",
+    "express": "^4.16.3"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-polyfill": "^6.26.0",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-register": "^6.26.0",
+    "rimraf": "^2.6.2"
+  }
+}
