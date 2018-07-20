@@ -28,18 +28,6 @@ const Airport = mongoose.model('Airport', airportSchema);
 //     }
 // })
 
-const airports = [
-    {name: 'Indianapolis International Airport (IND)', image: 'http://www.hok.com/uploads/2012/04/10/indy-airport01.jpg'},
-    {name: 'Amsterdam Schiphol International Airport (AMS)', image: 'https://amsterdamholland.ca/images/schiphollocation.jpg'},
-    {name: 'Boston Logan Internation Airport (BOS)', image: 'http://www.hok.com/uploads/2012/03/28/boston-logan01.jpg'},
-    {name: 'Indianapolis International Airport (IND)', image: 'http://www.hok.com/uploads/2012/04/10/indy-airport01.jpg'},
-    {name: 'Amsterdam Schiphol International Airport (AMS)', image: 'https://amsterdamholland.ca/images/schiphollocation.jpg'},
-    {name: 'Boston Logan Internation Airport (BOS)', image: 'http://www.hok.com/uploads/2012/03/28/boston-logan01.jpg'},
-    {name: 'Indianapolis International Airport (IND)', image: 'http://www.hok.com/uploads/2012/04/10/indy-airport01.jpg'},
-    {name: 'Amsterdam Schiphol International Airport (AMS)', image: 'https://amsterdamholland.ca/images/schiphollocation.jpg'},
-    {name: 'Boston Logan Internation Airport (BOS)', image: 'http://www.hok.com/uploads/2012/03/28/boston-logan01.jpg'},
-];
-
 app.get('/', (req, res) => {
     res.render('landing');
 });
@@ -61,9 +49,16 @@ app.post('/airports', (req, res) => {
     const name = req.body.name;
     const image = req.body.image;
     const newAirport = {name, image};
-    airports.push(newAirport);
-    // Redirect to airports page
-    res.redirect('/airports');
+    // Create a new campground and save to DB
+    Airport.create(newAirport, (err, newlyCreate) => {
+        if (err) {
+            console.log(err);
+        }
+        else {
+            // Redirect to airports page
+            res.redirect('/airports');
+        }
+    });
 });
 
 app.get('/airports/new', (req, res) => {
