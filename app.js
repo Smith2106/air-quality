@@ -6,6 +6,12 @@ const airports = [
     {name: 'Indianapolis International Airport (IND)', image: 'http://www.hok.com/uploads/2012/04/10/indy-airport01.jpg'},
     {name: 'Amsterdam Schiphol International Airport (AMS)', image: 'https://amsterdamholland.ca/images/schiphollocation.jpg'},
     {name: 'Boston Logan Internation Airport (BOS)', image: 'http://www.hok.com/uploads/2012/03/28/boston-logan01.jpg'},
+    {name: 'Indianapolis International Airport (IND)', image: 'http://www.hok.com/uploads/2012/04/10/indy-airport01.jpg'},
+    {name: 'Amsterdam Schiphol International Airport (AMS)', image: 'https://amsterdamholland.ca/images/schiphollocation.jpg'},
+    {name: 'Boston Logan Internation Airport (BOS)', image: 'http://www.hok.com/uploads/2012/03/28/boston-logan01.jpg'},
+    {name: 'Indianapolis International Airport (IND)', image: 'http://www.hok.com/uploads/2012/04/10/indy-airport01.jpg'},
+    {name: 'Amsterdam Schiphol International Airport (AMS)', image: 'https://amsterdamholland.ca/images/schiphollocation.jpg'},
+    {name: 'Boston Logan Internation Airport (BOS)', image: 'http://www.hok.com/uploads/2012/03/28/boston-logan01.jpg'},
 ];
 
 app.use(bodyParser.urlencoded({extended: true}));
