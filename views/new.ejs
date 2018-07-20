@@ -1,0 +1,10 @@
+<% include partials/header %>
+<h1>Create a New Airport</h1>
+<form action="/airports" method="POST">
+    <input type="text" name="name" placeholder="name">
+    <input type="text" name="image" placeholder="image url">
+    <button type="submit">Submit</button>
+</form>
+
+<a href="/airports">Go Back</a>
+<% include partials/footer %>
