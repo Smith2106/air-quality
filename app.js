@@ -10,14 +10,16 @@ app.set('view engine', 'ejs');
 // Schema Setup
 const airportSchema = new mongoose.Schema({
     name: String,
-    image: String
+    image: String,
+    description: String
 });
 
 const Airport = mongoose.model('Airport', airportSchema);
 
 // Airport.create({
 //     name: 'Amsterdam Schiphol International Airport (AMS)',
-//     image: 'https://amsterdamholland.ca/images/schiphollocation.jpg'
+//     image: 'https://amsterdamholland.ca/images/schiphollocation.jpg',
+//     description: 'This airport is a major hub in Europe and is absolutely massive.',
 // }, (err, airport) => {
 //     if (err) {
 //         console.log(err);
@@ -26,7 +28,7 @@ const Airport = mongoose.model('Airport', airportSchema);
 //         console.log("NEWLY CREATE AIRPORT: ");
 //         console.log(airport);
 //     }
-// })
+// });
 
 app.get('/', (req, res) => {
     res.render('landing');
@@ -39,7 +41,7 @@ app.get('/airports', (req, res) => {
             console.log(err);
         }
         else {
-            res.render('airports', { airports });
+            res.render('index', { airports });
         }
     });
 });
@@ -48,7 +50,8 @@ app.post('/airports', (req, res) => {
     // Get data from form and add to airports array
     const name = req.body.name;
     const image = req.body.image;
-    const newAirport = {name, image};
+    const description = req.body.description
+    const newAirport = {name, image, description};
     // Create a new campground and save to DB
     Airport.create(newAirport, (err, newlyCreate) => {
         if (err) {
@@ -63,6 +66,19 @@ app.post('/airports', (req, res) => {
 
 app.get('/airports/new', (req, res) => {
     res.render('new.ejs');
+});
+
+app.get('/airports/:id', (req, res) => {
+    // Find the aiport with the provided ID
+    Airport.findById(req.params.id, (err, airport) => {
+        if (err) {
+            console.log(err);
+        }
+        else {
+            // Render show template with that airport
+            res.render('show', {airport});
+        }
+    });
 });
 
 app.listen(3000, () => {
