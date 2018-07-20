@@ -1,6 +1,32 @@
 import express from 'express';
 import bodyParser from 'body-parser';
+import mongoose from 'mongoose';
 const app = express();
+
+mongoose.connect('mongodb://localhost:27017/air-quality', {useNewUrlParser: true});
+app.use(bodyParser.urlencoded({extended: true}));
+app.set('view engine', 'ejs');
+
+// Schema Setup
+const airportSchema = new mongoose.Schema({
+    name: String,
+    image: String
+});
+
+const Airport = mongoose.model('Airport', airportSchema);
+
+// Airport.create({
+//     name: 'Amsterdam Schiphol International Airport (AMS)',
+//     image: 'https://amsterdamholland.ca/images/schiphollocation.jpg'
+// }, (err, airport) => {
+//     if (err) {
+//         console.log(err);
+//     }
+//     else {
+//         console.log("NEWLY CREATE AIRPORT: ");
+//         console.log(airport);
+//     }
+// })
 
 const airports = [
     {name: 'Indianapolis International Airport (IND)', image: 'http://www.hok.com/uploads/2012/04/10/indy-airport01.jpg'},
@@ -14,15 +40,20 @@ const airports = [
     {name: 'Boston Logan Internation Airport (BOS)', image: 'http://www.hok.com/uploads/2012/03/28/boston-logan01.jpg'},
 ];
 
-app.use(bodyParser.urlencoded({extended: true}));
-app.set('view engine', 'ejs');
-
 app.get('/', (req, res) => {
     res.render('landing');
 });
 
 app.get('/airports', (req, res) => {
-    res.render('airports', { airports });
+    // Get all airports from the db
+    Airport.find({}, (err, airports) => {
+        if (err) {
+            console.log(err);
+        }
+        else {
+            res.render('airports', { airports });
+        }
+    });
 });
 
 app.post('/airports', (req, res) => {
