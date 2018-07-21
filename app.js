@@ -1,20 +1,12 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
+import Airport from './models/airport';
 const app = express();
 
 mongoose.connect('mongodb://localhost:27017/air-quality', {useNewUrlParser: true});
 app.use(bodyParser.urlencoded({extended: true}));
 app.set('view engine', 'ejs');
-
-// Schema Setup
-const airportSchema = new mongoose.Schema({
-    name: String,
-    image: String,
-    description: String
-});
-
-const Airport = mongoose.model('Airport', airportSchema);
 
 // Airport.create({
 //     name: 'Amsterdam Schiphol International Airport (AMS)',
