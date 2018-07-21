@@ -2,25 +2,13 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
 import Airport from './models/airport';
+import seedDB from './seeds';
 const app = express();
 
 mongoose.connect('mongodb://localhost:27017/air-quality', {useNewUrlParser: true});
 app.use(bodyParser.urlencoded({extended: true}));
 app.set('view engine', 'ejs');
-
-// Airport.create({
-//     name: 'Amsterdam Schiphol International Airport (AMS)',
-//     image: 'https://amsterdamholland.ca/images/schiphollocation.jpg',
-//     description: 'This airport is a major hub in Europe and is absolutely massive.',
-// }, (err, airport) => {
-//     if (err) {
-//         console.log(err);
-//     }
-//     else {
-//         console.log("NEWLY CREATE AIRPORT: ");
-//         console.log(airport);
-//     }
-// });
+seedDB();
 
 app.get('/', (req, res) => {
     res.render('landing');
@@ -62,11 +50,13 @@ app.get('/airports/new', (req, res) => {
 
 app.get('/airports/:id', (req, res) => {
     // Find the aiport with the provided ID
-    Airport.findById(req.params.id, (err, airport) => {
+    Airport.findById(req.params.id).populate("comments").exec((err, airport) => {
+        console.log(err);
         if (err) {
             console.log(err);
         }
         else {
+            console.log(airport);
             // Render show template with that airport
             res.render('show', {airport});
         }
