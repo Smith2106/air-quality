@@ -2,4 +2,10 @@
 <h1><%= airport.name %></h1>
 <img src="<%= airport.image %>" alt="Airport Picture">
 <p><%= airport.description %></p>
+
+<% airport.comments.forEach(comment => { %>
+    <p>
+        <strong><%= comment.author %></strong> - <%= comment.text %>
+    </p>
+<% }); %>
 <% include partials/footer %>
