@@ -2,6 +2,7 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
 import Airport from './models/airport';
+import Comment from './models/comment';
 import seedDB from './seeds';
 const app = express();
 
@@ -75,6 +76,31 @@ app.get('/airports/:id/comments/new', (req, res) => {
             res.render('comments/new', {airport});
         }
     });
+});
+
+app.post('/airports/:id', (req, res) => {
+    // Lookup campground using ID
+    Airport.findById(req.params.id, (err, airport) => {
+        if (err) {
+            console.log(err);
+            res.redirect('/airports');
+        }
+        else {
+            // Create new comment
+            Comment.create(req.body.comment, (err, comment) => {
+                if (err) {
+                    console.log(err);
+                }
+                else {
+                    // Connect new comment to campground
+                    airport.comments.push(comment);
+                    airport.save();
+                    // Redirect campground show page
+                    res.redirect(`/airports/${airport._id}`);
+                }
+            });
+        }
+    });    
 });
 
 app.listen(3000, () => {
