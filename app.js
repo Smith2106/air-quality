@@ -21,7 +21,7 @@ app.get('/airports', (req, res) => {
             console.log(err);
         }
         else {
-            res.render('index', { airports });
+            res.render('airports/index', { airports });
         }
     });
 });
@@ -45,7 +45,7 @@ app.post('/airports', (req, res) => {
 });
 
 app.get('/airports/new', (req, res) => {
-    res.render('new.ejs');
+    res.render('airports/new');
 });
 
 app.get('/airports/:id', (req, res) => {
@@ -56,9 +56,23 @@ app.get('/airports/:id', (req, res) => {
             console.log(err);
         }
         else {
-            console.log(airport);
             // Render show template with that airport
-            res.render('show', {airport});
+            res.render('airports/show', {airport});
+        }
+    });
+});
+
+// =========================
+// COMMENT ROUTES
+// =========================
+
+app.get('/airports/:id/comments/new', (req, res) => {
+    Airport.findById(req.params.id, (err, airport) => {
+        if (err) {
+            console.log(err);
+        }
+        else {
+            res.render('comments/new', {airport});
         }
     });
 });
