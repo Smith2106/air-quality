@@ -3,6 +3,10 @@
 <img src="<%= airport.image %>" alt="Airport Picture">
 <p><%= airport.description %></p>
 
+<p>
+    <a class="btn btn-success" href="/airports/<%= airport._id %>/comments/new">Add New Comment</a>
+</p>
+
 <% airport.comments.forEach(comment => { %>
     <p>
         <strong><%= comment.author %></strong> - <%= comment.text %>
