@@ -9,6 +9,7 @@ const app = express();
 mongoose.connect('mongodb://localhost:27017/air-quality', {useNewUrlParser: true});
 app.use(bodyParser.urlencoded({extended: true}));
 app.set('view engine', 'ejs');
+app.use(express.static(`${__dirname}/public`))
 seedDB();
 
 app.get('/', (req, res) => {
@@ -52,7 +53,6 @@ app.get('/airports/new', (req, res) => {
 app.get('/airports/:id', (req, res) => {
     // Find the aiport with the provided ID
     Airport.findById(req.params.id).populate("comments").exec((err, airport) => {
-        console.log(err);
         if (err) {
             console.log(err);
         }
