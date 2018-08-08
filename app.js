@@ -142,7 +142,20 @@ app.post('/register', (req, res) => {
             res.redirect('/airports');
         });
     });
+});
+
+// Show login form
+app.get('/login', (req, res) => {
+    res.render('login');
 })
+
+// Handle sign in login
+app.post('/login', passport.authenticate('local', 
+    {
+        successRedirect: '/airports',
+        failureRedirect: '/login'
+    }), (req, res) => {
+});
 
 app.listen(3000, () => {
     console.log('Air-Quality server has started!');
