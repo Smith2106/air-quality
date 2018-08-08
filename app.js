@@ -95,7 +95,7 @@ app.get('/airports/:id/comments/new', isLoggedIn, (req, res) => {
     });
 });
 
-app.post('/airports/:id', (req, res) => {
+app.post('/airports/:id/comments', isLoggedIn, (req, res) => {
     // Lookup campground using ID
     Airport.findById(req.params.id, (err, airport) => {
         if (err) {
