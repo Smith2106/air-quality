@@ -17,6 +17,18 @@ app.set('view engine', 'ejs');
 app.use(express.static(`${__dirname}/public`))
 seedDB();
 
+// PASPORT CONFIGURATION
+app.use(require('express-session')({
+    secret: 'Done cases remove hand oppressed after racing nervously intact through.',
+    resave: false,
+    saveUninitialized: false
+}));
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new LocalStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
 app.get('/', (req, res) => {
     res.render('landing');
 });
@@ -107,6 +119,30 @@ app.post('/airports/:id', (req, res) => {
         }
     });    
 });
+
+// ================
+// AUTH ROUTES
+// ================
+
+// Show register form
+app.get('/register', (req, res) => {
+    res.render('register');
+});
+
+// Handle sign up logic
+app.post('/register', (req, res) => {
+    const newUser = new User({username: req.body.username});
+    User.register(newUser, req.body.password, (err, user) => {
+        if (err) {
+            console.log(err);
+            return res.render('register');
+        }
+
+        passport.authenticate('local')(req, res, () => {
+            res.redirect('/airports');
+        });
+    });
+})
 
 app.listen(3000, () => {
     console.log('Air-Quality server has started!');
