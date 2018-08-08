@@ -157,6 +157,12 @@ app.post('/login', passport.authenticate('local',
     }), (req, res) => {
 });
 
+// Logout route
+app.get('/logout', (req, res) => {
+    req.logout();
+    res.redirect('/airports');
+});
+
 app.listen(3000, () => {
     console.log('Air-Quality server has started!');
 });
