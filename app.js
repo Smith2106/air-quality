@@ -1,9 +1,14 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
+import passport from 'passport';
+import LocalStrategy from 'passport-local';
+
 import Airport from './models/airport';
 import Comment from './models/comment';
+import User from './models/user';
 import seedDB from './seeds';
+
 const app = express();
 
 mongoose.connect('mongodb://localhost:27017/air-quality', {useNewUrlParser: true});
