@@ -84,7 +84,7 @@ app.get('/airports/:id', (req, res) => {
 // COMMENT ROUTES
 // =========================
 
-app.get('/airports/:id/comments/new', (req, res) => {
+app.get('/airports/:id/comments/new', isLoggedIn, (req, res) => {
     Airport.findById(req.params.id, (err, airport) => {
         if (err) {
             console.log(err);
@@ -162,6 +162,13 @@ app.get('/logout', (req, res) => {
     req.logout();
     res.redirect('/airports');
 });
+
+function isLoggedIn(req, res, next) {
+    if (req.isAuthenticated()) {
+        return next();
+    }
+    res.redirect('/login');
+}
 
 app.listen(3000, () => {
     console.log('Air-Quality server has started!');
