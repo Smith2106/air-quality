@@ -9,6 +9,11 @@ import Comment from './models/comment';
 import User from './models/user';
 import seedDB from './seeds';
 
+// Import routes
+import commentRoutes from './routes/comments';
+import airportRoutes from './routes/airports';
+import indexRoutes from './routes/index';
+
 const app = express();
 
 mongoose.connect('mongodb://localhost:27017/air-quality', {useNewUrlParser: true});
@@ -34,146 +39,9 @@ app.use((req, res, next) => {
     next();
 });
 
-app.get('/', (req, res) => {
-    res.render('landing');
-});
-
-app.get('/airports', (req, res) => {
-    // Get all airports from the db
-    Airport.find({}, (err, airports) => {
-        if (err) {
-            console.log(err);
-        }
-        else {
-            res.render('airports/index', { airports });
-        }
-    });
-});
-
-app.post('/airports', (req, res) => {
-    // Get data from form and add to airports array
-    const name = req.body.name;
-    const image = req.body.image;
-    const description = req.body.description
-    const newAirport = {name, image, description};
-    // Create a new campground and save to DB
-    Airport.create(newAirport, (err, newlyCreate) => {
-        if (err) {
-            console.log(err);
-        }
-        else {
-            // Redirect to airports page
-            res.redirect('/airports');
-        }
-    });
-});
-
-app.get('/airports/new', (req, res) => {
-    res.render('airports/new');
-});
-
-app.get('/airports/:id', (req, res) => {
-    // Find the aiport with the provided ID
-    Airport.findById(req.params.id).populate("comments").exec((err, airport) => {
-        if (err) {
-            console.log(err);
-        }
-        else {
-            // Render show template with that airport
-            res.render('airports/show', {airport});
-        }
-    });
-});
-
-// =========================
-// COMMENT ROUTES
-// =========================
-
-app.get('/airports/:id/comments/new', isLoggedIn, (req, res) => {
-    Airport.findById(req.params.id, (err, airport) => {
-        if (err) {
-            console.log(err);
-        }
-        else {
-            res.render('comments/new', {airport});
-        }
-    });
-});
-
-app.post('/airports/:id/comments', isLoggedIn, (req, res) => {
-    // Lookup campground using ID
-    Airport.findById(req.params.id, (err, airport) => {
-        if (err) {
-            console.log(err);
-            res.redirect('/airports');
-        }
-        else {
-            // Create new comment
-            Comment.create(req.body.comment, (err, comment) => {
-                if (err) {
-                    console.log(err);
-                }
-                else {
-                    // Connect new comment to campground
-                    airport.comments.push(comment);
-                    airport.save();
-                    // Redirect campground show page
-                    res.redirect(`/airports/${airport._id}`);
-                }
-            });
-        }
-    });    
-});
-
-// ================
-// AUTH ROUTES
-// ================
-
-// Show register form
-app.get('/register', (req, res) => {
-    res.render('register');
-});
-
-// Handle sign up logic
-app.post('/register', (req, res) => {
-    const newUser = new User({username: req.body.username});
-    User.register(newUser, req.body.password, (err, user) => {
-        if (err) {
-            console.log(err);
-            return res.render('register');
-        }
-
-        passport.authenticate('local')(req, res, () => {
-            res.redirect('/airports');
-        });
-    });
-});
-
-// Show login form
-app.get('/login', (req, res) => {
-    res.render('login');
-})
-
-// Handle sign in login
-app.post('/login', passport.authenticate('local', 
-    {
-        successRedirect: '/airports',
-        failureRedirect: '/login'
-    }), (req, res) => {
-});
-
-// Logout route
-app.get('/logout', (req, res) => {
-    req.logout();
-    res.redirect('/airports');
-});
-
-function isLoggedIn(req, res, next) {
-    if (req.isAuthenticated()) {
-        return next();
-    }
-    res.redirect('/login');
-}
+app.use('/', indexRoutes);
+app.use('/airports/', airportRoutes);
+app.use('/airports/:id/comments', commentRoutes);
 
 app.listen(3000, () => {
     console.log('Air-Quality server has started!');
