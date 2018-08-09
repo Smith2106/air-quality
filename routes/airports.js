@@ -1,0 +1,57 @@
+import express from 'express';
+const router = express.Router();
+
+import Airport from '../models/airport';
+
+// INDEX - show all aiports
+router.get('/', (req, res) => {
+    // Get all airports from the db
+    Airport.find({}, (err, airports) => {
+        if (err) {
+            console.log(err);
+        }
+        else {
+            res.render('airports/index', { airports });
+        }
+    });
+});
+
+// CREATE - add a new airport to DB
+router.post('/', (req, res) => {
+    // Get data from form and add to airports array
+    const name = req.body.name;
+    const image = req.body.image;
+    const description = req.body.description
+    const newAirport = {name, image, description};
+    // Create a new campground and save to DB
+    Airport.create(newAirport, (err, newlyCreate) => {
+        if (err) {
+            console.log(err);
+        }
+        else {
+            // Redirect to airports page
+            res.redirect('/airports');
+        }
+    });
+});
+
+// NEW - show form to create new campground
+router.get('/new', (req, res) => {
+    res.render('airports/new');
+});
+
+// SHOW - shows more info about one campground
+router.get('/:id', (req, res) => {
+    // Find the aiport with the provided ID
+    Airport.findById(req.params.id).populate("comments").exec((err, airport) => {
+        if (err) {
+            console.log(err);
+        }
+        else {
+            // Render show template with that airport
+            res.render('airports/show', {airport});
+        }
+    });
+});
+
+export default router;
