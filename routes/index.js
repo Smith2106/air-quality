@@ -4,6 +4,7 @@ import passport from 'passport';
 
 import User from '../models/user';
 
+// Root route
 router.get('/', (req, res) => {
     res.render('landing');
 });
