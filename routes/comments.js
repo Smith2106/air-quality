@@ -18,7 +18,7 @@ router.get('/new', isLoggedIn, (req, res) => {
 
 // Comments create
 router.post('/', isLoggedIn, (req, res) => {
-    // Lookup campground using ID
+    // Lookup airport using ID
     Airport.findById(req.params.id, (err, airport) => {
         if (err) {
             console.log(err);
@@ -31,10 +31,13 @@ router.post('/', isLoggedIn, (req, res) => {
                     console.log(err);
                 }
                 else {
-                    // Connect new comment to campground
+                    // Add user and id to comment
+                    comment.author.id = req.user._id;
+                    comment.author.username = req.user.username;
+                    comment.save();
                     airport.comments.push(comment);
                     airport.save();
-                    // Redirect campground show page
+                    // Redirect airport show page
                     res.redirect(`/airports/${airport._id}`);
                 }
             });
