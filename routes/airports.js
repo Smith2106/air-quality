@@ -17,12 +17,16 @@ router.get('/', (req, res) => {
 });
 
 // CREATE - add a new airport to DB
-router.post('/', (req, res) => {
+router.post('/', isLoggedIn, (req, res) => {
     // Get data from form and add to airports array
     const name = req.body.name;
     const image = req.body.image;
-    const description = req.body.description
-    const newAirport = {name, image, description};
+    const description = req.body.description;
+    const author = {
+        id: req.user._id,
+        username: req.user.username
+    };
+    const newAirport = {name, image, author, description};
     // Create a new campground and save to DB
     Airport.create(newAirport, (err, newlyCreate) => {
         if (err) {
@@ -36,7 +40,7 @@ router.post('/', (req, res) => {
 });
 
 // NEW - show form to create new campground
-router.get('/new', (req, res) => {
+router.get('/new', isLoggedIn, (req, res) => {
     res.render('airports/new');
 });
 
@@ -53,5 +57,13 @@ router.get('/:id', (req, res) => {
         }
     });
 });
+
+// Middleware
+function isLoggedIn(req, res, next) {
+    if (req.isAuthenticated()) {
+        return next();
+    }
+    res.redirect('/login');
+}
 
 export default router;
