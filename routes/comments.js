@@ -45,6 +45,44 @@ router.post('/', isLoggedIn, (req, res) => {
     });    
 });
 
+
+// EDIT COMMENT ROUTE
+router.get('/:comment_id/edit', (req, res) => {
+    const airport_id = req.params.id;
+    Comment.findById(req.params.comment_id, (err, comment) => {
+        if (err) {
+            res.redirect('back');
+        }
+        else {
+            res.render('comments/edit', { airport_id, comment });
+        }
+    });
+});
+
+// UPDATE COMMENT ROUTE
+router.put('/:comment_id', (req, res) => {
+    Comment.findByIdAndUpdate(req.params.comment_id, req.body.comment, (err, comment) => {
+        if (err) {
+            res.redirect('back');
+        }
+        else {
+            res.redirect(`/airports/${req.params.id}`);
+        }
+    });
+});
+
+// DESTROY COMMENT ROUTE
+router.delete('/:comment_id', (req, res) => {
+    Comment.findByIdAndRemove(req.params.comment_id, (err) => {
+        if (err) {
+            res.redirect('back');
+        }
+        else {
+            res.redirect(`/airports/${req.params.id}`);
+        }
+    });
+});
+
 // Middleware
 function isLoggedIn(req, res, next) {
     if (req.isAuthenticated()) {
