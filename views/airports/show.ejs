@@ -21,7 +21,7 @@
                     </p>
                     <% if (currentUser && airport.author.id.equals(currentUser._id)) { %>
                         <a class="btn btn-warning" href="/airports/<%= airport._id %>/edit">Edit</a>
-                        <form id="delete-form" action="/airports/<%= airport._id %>?_method=DELETE" method="POST">
+                        <form class="delete-form" action="/airports/<%= airport._id %>?_method=DELETE" method="POST">
                             <button class="btn btn-danger">Delete</button>
                         </form>
                     <% } %>
@@ -40,6 +40,19 @@
                             <p>
                                 <%= comment.text %>
                             </p>
+                            <a 
+                                class="btn btn-xs btn-warning"
+                                href="/airports/<%= airport._id %>/comments/<%= comment._id %>/edit"
+                            >
+                                Edit
+                            </a>
+                            <form 
+                                action="/airports/<%= airport._id %>/comments/<%= comment._id %>?_method=DELETE" 
+                                method="POST"
+                                class="delete-form"
+                            >
+                                <button class="btn btn-xs btn-danger">Delete</button>    
+                            </form>
                         </div>
                     </div>
                 <% }); %>
