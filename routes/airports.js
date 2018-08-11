@@ -59,19 +59,14 @@ router.get('/:id', (req, res) => {
 });
 
 // EDIT AIRPORT ROUTE
-router.get('/:id/edit', (req, res) => {
+router.get('/:id/edit', checkAirportOwnership, (req, res) => {
     Airport.findById(req.params.id, (err, airport) => {
-        if (err) {
-            res.redirect('/airports');
-        }
-        else {
-            res.render('airports/edit', {airport});
-        }
+        res.render('airports/edit', {airport});        
     });
 });
 
 // UPDATE AIRPORT ROUTE
-router.put('/:id', (req, res) => {
+router.put('/:id', checkAirportOwnership, (req, res) => {
     Airport.findByIdAndUpdate(req.params.id, req.body.airport, (err, airport) => {
         if (err) {
             res.redirect('/airports');
@@ -83,7 +78,7 @@ router.put('/:id', (req, res) => {
 });
 
 // DESTROY AIRPORT ROUTE
-router.delete('/:id', (req, res) => {
+router.delete('/:id', checkAirportOwnership, (req, res) => {
     Airport.findByIdAndRemove(req.params.id, (err) => {
         if (err) {
             res.redirect('/airports');
@@ -100,6 +95,29 @@ function isLoggedIn(req, res, next) {
         return next();
     }
     res.redirect('/login');
+}
+
+function checkAirportOwnership(req, res, next) {
+    // Is user logged in
+    if (req.isAuthenticated()) {
+        Airport.findById(req.params.id, (err, airport) => {
+            if (err) {
+                res.redirect('back');
+            }
+            else {
+                // Does user own the campground
+                if (airport.author.id.equals(req.user._id)) {
+                    next();
+                }
+                else {
+                    res.redirect('back');
+                }
+            }
+        });
+    }
+    else {
+        res.redirect('back');
+    }
 }
 
 export default router;
