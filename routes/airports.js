@@ -82,6 +82,18 @@ router.put('/:id', (req, res) => {
     });
 });
 
+// DESTROY AIRPORT ROUTE
+router.delete('/:id', (req, res) => {
+    Airport.findByIdAndRemove(req.params.id, (err) => {
+        if (err) {
+            res.redirect('/airports');
+        }
+        else {
+            res.redirect('/airports');
+        }
+    });
+});
+
 // Middleware
 function isLoggedIn(req, res, next) {
     if (req.isAuthenticated()) {
