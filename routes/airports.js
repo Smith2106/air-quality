@@ -58,6 +58,30 @@ router.get('/:id', (req, res) => {
     });
 });
 
+// EDIT AIRPORT ROUTE
+router.get('/:id/edit', (req, res) => {
+    Airport.findById(req.params.id, (err, airport) => {
+        if (err) {
+            res.redirect('/airports');
+        }
+        else {
+            res.render('airports/edit', {airport});
+        }
+    });
+});
+
+// UPDATE AIRPORT ROUTE
+router.put('/:id', (req, res) => {
+    Airport.findByIdAndUpdate(req.params.id, req.body.airport, (err, airport) => {
+        if (err) {
+            res.redirect('/airports');
+        } 
+        else {
+            res.redirect(`/airports/${req.params.id}`);
+        }
+    });
+});
+
 // Middleware
 function isLoggedIn(req, res, next) {
     if (req.isAuthenticated()) {
