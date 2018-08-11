@@ -3,6 +3,7 @@ import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
 import passport from 'passport';
 import LocalStrategy from 'passport-local';
+import methodOverride from 'method-override';
 
 import Airport from './models/airport';
 import Comment from './models/comment';
@@ -20,6 +21,7 @@ mongoose.connect('mongodb://localhost:27017/air-quality', {useNewUrlParser: true
 app.use(bodyParser.urlencoded({extended: true}));
 app.set('view engine', 'ejs');
 app.use(express.static(`${__dirname}/public`));
+app.use(methodOverride('_method'))
 // seedDB(); // Seed the database
 
 // PASPORT CONFIGURATION
