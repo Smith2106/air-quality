@@ -2,6 +2,7 @@ import express from 'express';
 const router = express.Router();
 
 import Airport from '../models/airport';
+import middleware from '../middleware';
 
 // INDEX - show all aiports
 router.get('/', (req, res) => {
@@ -17,7 +18,7 @@ router.get('/', (req, res) => {
 });
 
 // CREATE - add a new airport to DB
-router.post('/', isLoggedIn, (req, res) => {
+router.post('/', middleware.isLoggedIn, (req, res) => {
     // Get data from form and add to airports array
     const name = req.body.name;
     const image = req.body.image;
@@ -40,7 +41,7 @@ router.post('/', isLoggedIn, (req, res) => {
 });
 
 // NEW - show form to create new campground
-router.get('/new', isLoggedIn, (req, res) => {
+router.get('/new', middleware.isLoggedIn, (req, res) => {
     res.render('airports/new');
 });
 
@@ -59,14 +60,14 @@ router.get('/:id', (req, res) => {
 });
 
 // EDIT AIRPORT ROUTE
-router.get('/:id/edit', checkAirportOwnership, (req, res) => {
+router.get('/:id/edit', middleware.checkAirportOwnership, (req, res) => {
     Airport.findById(req.params.id, (err, airport) => {
         res.render('airports/edit', {airport});        
     });
 });
 
 // UPDATE AIRPORT ROUTE
-router.put('/:id', checkAirportOwnership, (req, res) => {
+router.put('/:id', middleware.checkAirportOwnership, (req, res) => {
     Airport.findByIdAndUpdate(req.params.id, req.body.airport, (err, airport) => {
         if (err) {
             res.redirect('/airports');
@@ -78,7 +79,7 @@ router.put('/:id', checkAirportOwnership, (req, res) => {
 });
 
 // DESTROY AIRPORT ROUTE
-router.delete('/:id', checkAirportOwnership, (req, res) => {
+router.delete('/:id', middleware.checkAirportOwnership, (req, res) => {
     Airport.findByIdAndRemove(req.params.id, (err) => {
         if (err) {
             res.redirect('/airports');
@@ -88,36 +89,5 @@ router.delete('/:id', checkAirportOwnership, (req, res) => {
         }
     });
 });
-
-// Middleware
-function isLoggedIn(req, res, next) {
-    if (req.isAuthenticated()) {
-        return next();
-    }
-    res.redirect('/login');
-}
-
-function checkAirportOwnership(req, res, next) {
-    // Is user logged in
-    if (req.isAuthenticated()) {
-        Airport.findById(req.params.id, (err, airport) => {
-            if (err) {
-                res.redirect('back');
-            }
-            else {
-                // Does user own the campground
-                if (airport.author.id.equals(req.user._id)) {
-                    next();
-                }
-                else {
-                    res.redirect('back');
-                }
-            }
-        });
-    }
-    else {
-        res.redirect('back');
-    }
-}
 
 export default router;
