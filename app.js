@@ -4,6 +4,7 @@ import mongoose from 'mongoose';
 import passport from 'passport';
 import LocalStrategy from 'passport-local';
 import methodOverride from 'method-override';
+import flash from 'connect-flash';
 
 import Airport from './models/airport';
 import Comment from './models/comment';
@@ -22,6 +23,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.set('view engine', 'ejs');
 app.use(express.static(`${__dirname}/public`));
 app.use(methodOverride('_method'))
+app.use(flash());
 // seedDB(); // Seed the database
 
 // PASPORT CONFIGURATION
