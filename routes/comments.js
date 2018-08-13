@@ -29,6 +29,7 @@ router.post('/', middleware.isLoggedIn, (req, res) => {
             // Create new comment
             Comment.create(req.body.comment, (err, comment) => {
                 if (err) {
+                    req.flash('error', 'Something went wrong');
                     console.log(err);
                 }
                 else {
@@ -38,6 +39,7 @@ router.post('/', middleware.isLoggedIn, (req, res) => {
                     comment.save();
                     airport.comments.push(comment);
                     airport.save();
+                    req.flash('success', 'Successfully added comment');
                     // Redirect airport show page
                     res.redirect(`/airports/${airport._id}`);
                 }
@@ -50,14 +52,21 @@ router.post('/', middleware.isLoggedIn, (req, res) => {
 // EDIT COMMENT ROUTE
 router.get('/:comment_id/edit', middleware.checkCommentOwnership, (req, res) => {
     const airport_id = req.params.id;
-    Comment.findById(req.params.comment_id, (err, comment) => {
-        if (err) {
-            res.redirect('back');
+    Airport.findById(airport_id, (err, airport) => {
+        if (err || !airport) {
+            req.flash('error', 'No airport found');
+            return res.redirect('back');
         }
-        else {
-            res.render('comments/edit', { airport_id, comment });
-        }
-    });
+        
+        Comment.findById(req.params.comment_id, (err, comment) => {
+            if (err) {
+                res.redirect('back');
+            }
+            else {
+                res.render('comments/edit', { airport_id, comment });
+            }
+        });
+    });  
 });
 
 // UPDATE COMMENT ROUTE
@@ -79,6 +88,7 @@ router.delete('/:comment_id', middleware.checkCommentOwnership, (req, res) => {
             res.redirect('back');
         }
         else {
+            req.flash('success', 'Comment deleted');
             res.redirect(`/airports/${req.params.id}`);
         }
     });
