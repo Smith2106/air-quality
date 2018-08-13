@@ -4,6 +4,7 @@ const airportSchema = new mongoose.Schema({
     name: String,
     image: String,
     description: String,
+    traffic: String,
     author: {
         id: {
             type: mongoose.Schema.Types.ObjectId,
