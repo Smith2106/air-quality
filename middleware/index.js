@@ -6,7 +6,8 @@ const middlewareObj = {
         // Is user logged in
         if (req.isAuthenticated()) {
             Airport.findById(req.params.id, (err, airport) => {
-                if (err) {
+                if (err || !airport) {
+                    req.flash('error', 'Airport not found');
                     res.redirect('back');
                 }
                 else {
@@ -15,12 +16,14 @@ const middlewareObj = {
                         next();
                     }
                     else {
+                        req.flash('error', "You don't have permission to do that");
                         res.redirect('back');
                     }
                 }
             });
         }
         else {
+            req.flash('error', 'You need to be logged in to do that')
             res.redirect('back');
         }
     },
@@ -28,14 +31,15 @@ const middlewareObj = {
         if (req.isAuthenticated()) {
             return next();
         }
-        req.flash('error', 'Please Login First!');
+        req.flash('error', 'You need to be logged in to do that');
         res.redirect('/login');
     },
     checkCommentOwnership(req, res, next) {
         // Is user logged in
         if (req.isAuthenticated()) {
             Comment.findById(req.params.comment_id, (err, comment) => {
-                if (err) {
+                if (err || !comment) {
+                    req.flash('error', 'Comment not found');
                     res.redirect('back');
                 }
                 else {
@@ -44,12 +48,14 @@ const middlewareObj = {
                         next();
                     }
                     else {
+                        req.flash('error', "You don't have permission to do that");
                         res.redirect('back');
                     }
                 }
             });
         }
         else {
+            req.flash('error', 'You need to be logged in to do that')
             res.redirect('back');
         }
     }
