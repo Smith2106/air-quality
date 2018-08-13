@@ -23,11 +23,12 @@ router.post('/', middleware.isLoggedIn, (req, res) => {
     const name = req.body.name;
     const image = req.body.image;
     const description = req.body.description;
+    const traffic = req.body.traffic;
     const author = {
         id: req.user._id,
         username: req.user.username
     };
-    const newAirport = {name, image, author, description};
+    const newAirport = {name, image, author, description, traffic};
     // Create a new campground and save to DB
     Airport.create(newAirport, (err, newlyCreated) => {
         if (err) {
