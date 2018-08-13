@@ -29,7 +29,7 @@ router.post('/', middleware.isLoggedIn, (req, res) => {
     };
     const newAirport = {name, image, author, description};
     // Create a new campground and save to DB
-    Airport.create(newAirport, (err, newlyCreate) => {
+    Airport.create(newAirport, (err, newlyCreated) => {
         if (err) {
             console.log(err);
         }
@@ -49,8 +49,9 @@ router.get('/new', middleware.isLoggedIn, (req, res) => {
 router.get('/:id', (req, res) => {
     // Find the aiport with the provided ID
     Airport.findById(req.params.id).populate("comments").exec((err, airport) => {
-        if (err) {
-            console.log(err);
+        if (err || !airport) {
+            req.flash('error', 'Airport not found');
+            res.redirect('back');
         }
         else {
             // Render show template with that airport
