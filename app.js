@@ -17,9 +17,7 @@ import airportRoutes from './routes/airports';
 import indexRoutes from './routes/index';
 
 const app = express();
-
-//mongoose.connect('mongodb://localhost:27017/air-quality', {useNewUrlParser: true});
-mongoose.connect('mongodb://Smith2106:heyoson5@ds119702.mlab.com:19702/air-quality', {useNewUrlParser: true});
+mongoose.connect(process.env.DATABASEURL, {useNewUrlParser: true});
 app.use(bodyParser.urlencoded({extended: true}));
 app.set('view engine', 'ejs');
 app.use(express.static(`${__dirname}/public`));
@@ -51,6 +49,6 @@ app.use('/airports/', airportRoutes);
 app.use('/airports/:id/comments', commentRoutes);
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
+app.listen(PORT, process.env.IP, () => {
     console.log('Air-Quality server has started!');
 });
