@@ -16,8 +16,10 @@ import commentRoutes from './routes/comments';
 import airportRoutes from './routes/airports';
 import indexRoutes from './routes/index';
 
+const dbURL = process.env.DATABASEURL || "mongodb://localhost:27017/air-quality";
+
 const app = express();
-mongoose.connect(process.env.DATABASEURL, {useNewUrlParser: true});
+mongoose.connect(dbURL, {useNewUrlParser: true});
 app.use(bodyParser.urlencoded({extended: true}));
 app.set('view engine', 'ejs');
 app.use(express.static(`${__dirname}/public`));
