@@ -37,8 +37,7 @@ router.post('/', middleware.isLoggedIn, (req, res) => {
                     // Add user and id to comment
                     comment.author.id = req.user._id;
                     comment.author.username = req.user.username;
-                    comment.createdAt = Date.now();
-                    console.log(new Date(Date.now()));
+                    comment.updatedAt = Date.now();
                     comment.save();
                     airport.comments.push(comment);
                     airport.save();
@@ -74,7 +73,9 @@ router.get('/:comment_id/edit', middleware.checkCommentOwnership, (req, res) => 
 
 // UPDATE COMMENT ROUTE
 router.put('/:comment_id', middleware.checkCommentOwnership, (req, res) => {
-    Comment.findByIdAndUpdate(req.params.comment_id, req.body.comment, (err, comment) => {
+    const newComment = req.body.comment;
+    newComment.updatedAt = Date.now();
+    Comment.findByIdAndUpdate(req.params.comment_id, newComment, (err, comment) => {
         if (err) {
             res.redirect('back');
         }
