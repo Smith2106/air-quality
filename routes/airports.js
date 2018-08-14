@@ -24,11 +24,12 @@ router.post('/', middleware.isLoggedIn, (req, res) => {
     const image = req.body.image;
     const description = req.body.description;
     const traffic = req.body.traffic;
+    const createdAt = Date.now();
     const author = {
         id: req.user._id,
         username: req.user.username
     };
-    const newAirport = {name, image, author, description, traffic};
+    const newAirport = {name, image, author, description, traffic, createdAt};
     // Create a new campground and save to DB
     Airport.create(newAirport, (err, newlyCreated) => {
         if (err) {
@@ -56,7 +57,7 @@ router.get('/:id', (req, res) => {
         }
         else {
             // Render show template with that airport
-            res.render('airports/show', {airport});
+            res.render('airports/show', {airport, moment});
         }
     });
 });
