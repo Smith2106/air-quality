@@ -1,4 +1,5 @@
 import express from 'express';
+import moment from 'moment';
 const router = express.Router({mergeParams: true});
 
 import Airport from '../models/airport';
@@ -36,6 +37,8 @@ router.post('/', middleware.isLoggedIn, (req, res) => {
                     // Add user and id to comment
                     comment.author.id = req.user._id;
                     comment.author.username = req.user.username;
+                    comment.createdAt = Date.now();
+                    console.log(new Date(Date.now()));
                     comment.save();
                     airport.comments.push(comment);
                     airport.save();
