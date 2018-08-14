@@ -49,6 +49,6 @@ app.use('/', indexRoutes);
 app.use('/airports/', airportRoutes);
 app.use('/airports/:id/comments', commentRoutes);
 
-app.listen(3000, () => {
+app.listen(3030, () => {
     console.log('Air-Quality server has started!');
 });
