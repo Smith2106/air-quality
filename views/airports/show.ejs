@@ -18,7 +18,7 @@
                     <p><%= airport.description %></p>
                     <p>
                         <em>Submitted By <%= airport.author.username %></em>
-                        <span class="pull-right">Last Updated <%= moment(new Date(parseInt(airport.createdAt))).fromNow() %></span>
+                        <span class="pull-right">Last Updated <%= moment(new Date(parseInt(airport.updatedAt))).fromNow() %></span>
                     </p>
                     <% if (currentUser && airport.author.id.equals(currentUser._id)) { %>
                         <a class="btn btn-warning" href="/airports/<%= airport._id %>/edit">Edit</a>
@@ -37,7 +37,7 @@
                     <div class="row">
                         <div class="col-md-12">
                             <strong><%= comment.author.username %></strong>
-                            <span class="pull-right">Last Updated <%= moment(new Date(parseInt(comment.createdAt))).fromNow() %></span>
+                            <span class="pull-right">Last Updated <%= moment(new Date(parseInt(comment.updatedAt))).fromNow() %></span>
                             <p>
                                 <%= comment.text %>
                             </p>
