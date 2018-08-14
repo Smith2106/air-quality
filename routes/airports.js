@@ -3,6 +3,7 @@ const router = express.Router();
 
 import Airport from '../models/airport';
 import middleware from '../middleware';
+import moment from 'moment';
 
 // INDEX - show all aiports
 router.get('/', (req, res) => {
@@ -24,12 +25,12 @@ router.post('/', middleware.isLoggedIn, (req, res) => {
     const image = req.body.image;
     const description = req.body.description;
     const traffic = req.body.traffic;
-    const createdAt = Date.now();
+    const updatedAt = Date.now();
     const author = {
         id: req.user._id,
         username: req.user.username
     };
-    const newAirport = {name, image, author, description, traffic, createdAt};
+    const newAirport = {name, image, author, description, traffic, updatedAt};
     // Create a new campground and save to DB
     Airport.create(newAirport, (err, newlyCreated) => {
         if (err) {
@@ -37,6 +38,7 @@ router.post('/', middleware.isLoggedIn, (req, res) => {
         }
         else {
             // Redirect to airports page
+            req.flash('success', 'Successfully created airport');
             res.redirect('/airports');
         }
     });
@@ -71,7 +73,9 @@ router.get('/:id/edit', middleware.checkAirportOwnership, (req, res) => {
 
 // UPDATE AIRPORT ROUTE
 router.put('/:id', middleware.checkAirportOwnership, (req, res) => {
-    Airport.findByIdAndUpdate(req.params.id, req.body.airport, (err, airport) => {
+    const newAirport = req.body.airport;
+    newAirport.updatedAt = Date.now();
+    Airport.findByIdAndUpdate(req.params.id, newAirport, (err, airport) => {
         if (err) {
             res.redirect('/airports');
         } 
