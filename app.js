@@ -15,7 +15,6 @@ import seedDB from './seeds';
 import commentRoutes from './routes/comments';
 import airportRoutes from './routes/airports';
 import indexRoutes from './routes/index';
-
 const dbURL = process.env.DATABASEURL || "mongodb://localhost:27017/air-quality";
 
 const app = express();
