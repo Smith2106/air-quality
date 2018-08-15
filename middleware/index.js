@@ -12,7 +12,7 @@ const middlewareObj = {
                 }
                 else {
                     // Does user own the campground
-                    if (airport.author.id.equals(req.user._id)) {
+                    if (airport.author.id.equals(req.user._id) || req.user.isAdmin) {
                         next();
                     }
                     else {
@@ -44,7 +44,7 @@ const middlewareObj = {
                 }
                 else {
                     // Does user own the campground
-                    if (comment.author.id.equals(req.user._id)) {
+                    if (comment.author.id.equals(req.user._id) || req.user.isAdmin) {
                         next();
                     }
                     else {
