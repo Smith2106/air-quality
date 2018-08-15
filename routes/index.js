@@ -21,6 +21,7 @@ router.get('/register', (req, res) => {
 // Handle sign up logic
 router.post('/register', (req, res) => {
     const newUser = new User({username: req.body.username});
+    if (req.body.adminCode === process.env.ADMIN_CODE) newUser.isAdmin = true;
     User.register(newUser, req.body.password, (err, user) => {
         if (err) {
             req.flash('error', err.message);
@@ -28,7 +29,7 @@ router.post('/register', (req, res) => {
         }
 
         passport.authenticate('local')(req, res, () => {
-            req.flash('success', `Welcome to Air-Quality ${user.username}`);
+            req.flash('success', `Welcome to Air-Quality ${user.isAdmin ? 'admin ' : ''}${user.username}`);
             res.redirect('/airports');
         });
     });
