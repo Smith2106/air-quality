@@ -92,6 +92,7 @@ router.delete('/:id', middleware.checkAirportOwnership, (req, res) => {
             res.redirect('/airports');
         }
         else {
+            req.flash('success', 'Successfully deleted airport');
             res.redirect('/airports');
         }
     });
