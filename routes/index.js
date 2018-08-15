@@ -1,6 +1,7 @@
 import express from 'express';
 const router = express.Router();
 import passport from 'passport';
+import url from 'url';
 
 import User from '../models/user';
 
@@ -15,13 +16,25 @@ router.get('/', (req, res) => {
 
 // Show register form
 router.get('/register', (req, res) => {
-    res.render('register', {page: 'register'});
+    res.render('register', {page: 'register', username: req.query.username, adminCode: req.query.adminCode});
 });
 
 // Handle sign up logic
 router.post('/register', (req, res) => {
+    if (req.body.passwordVerify !== req.body.password) {
+        req.flash('error', 'Passwords do not match. Please try again');
+        return res.redirect(url.format({
+            pathname: '/register',
+            query: {
+                "username": req.body.username,
+                "adminCode": req.body.adminCode
+            }
+        }));
+    }
+
     const newUser = new User({username: req.body.username});
     if (req.body.adminCode === process.env.ADMIN_CODE) newUser.isAdmin = true;
+
     User.register(newUser, req.body.password, (err, user) => {
         if (err) {
             req.flash('error', err.message);
