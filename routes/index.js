@@ -4,6 +4,7 @@ import passport from 'passport';
 import url from 'url';
 
 import User from '../models/user';
+import Airport from '../models/airport';
 
 // Root route
 router.get('/', (req, res) => {
@@ -16,23 +17,25 @@ router.get('/', (req, res) => {
 
 // Show register form
 router.get('/register', (req, res) => {
-    res.render('register', {page: 'register', username: req.query.username, adminCode: req.query.adminCode});
+    const pageInfo = Object.assign({}, req.query);
+    pageInfo.page = 'register';
+    res.render('register', pageInfo);
 });
 
 // Handle sign up logic
 router.post('/register', (req, res) => {
     if (req.body.passwordVerify !== req.body.password) {
         req.flash('error', 'Passwords do not match. Please try again');
+        const query = Object.assign({}, req.body.user);
+        console.log(req.body.user);
+        query.adminCode = req.body.adminCode;
         return res.redirect(url.format({
             pathname: '/register',
-            query: {
-                "username": req.body.username,
-                "adminCode": req.body.adminCode
-            }
+            query
         }));
     }
 
-    const newUser = new User({username: req.body.username});
+    const newUser = new User(req.body.user);
     if (req.body.adminCode === process.env.ADMIN_CODE) newUser.isAdmin = true;
 
     User.register(newUser, req.body.password, (err, user) => {
@@ -66,6 +69,24 @@ router.get('/logout', (req, res) => {
     req.logout();
     req.flash('success', 'Logged you out!');
     res.redirect('/airports');
+});
+
+// USER PROFILE
+router.get('/users/:id', (req, res) => {
+    User.findById(req.params.id, (err, user) => {
+        if (err) {
+            req.flash('error', err.message);
+            return res.redirect('/airports');
+        }
+
+        Airport.find().where('author.id').equals(user._id).exec((err, airports) => {
+            if (err) {
+                req.flash('error', err.message);
+                return res.redirect('/airports');
+            }
+            res.render('users/show', {user, airports});
+        });
+    });
 });
 
 export default router;
