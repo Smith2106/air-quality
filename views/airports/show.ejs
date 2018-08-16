@@ -18,7 +18,7 @@
                     <h4><a><%= airport.name %></a></h4>
                     <p><%= airport.description %></p>
                     <p>
-                        <em>Submitted By <%= airport.author.username %></em>
+                        <em>Submitted By <a href="/users/<%= airport.author.id%>"><%= airport.author.username %></a></em>
                         <span class="pull-right">Last Updated <%= moment(new Date(parseInt(airport.updatedAt))).fromNow() %></span>
                     </p>
                     <% if (currentUser && (airport.author.id.equals(currentUser._id) || currentUser.isAdmin)) { %>
@@ -37,7 +37,7 @@
                 <% airport.comments.forEach(comment => { %>
                     <div class="row">
                         <div class="col-md-12">
-                            <strong><%= comment.author.username %></strong>
+                            <a href="/users/<%= comment.author.id %>"><strong><%= comment.author.username %></strong></a>
                             <span class="pull-right">Last Updated <%= moment(new Date(parseInt(comment.updatedAt))).fromNow() %></span>
                             <p>
                                 <%= comment.text %>
