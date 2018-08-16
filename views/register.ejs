@@ -7,10 +7,37 @@
             <input 
                 class="form-control" 
                 type="text" 
-                name="username" 
+                name="user[username]" 
                 placeholder="username" 
                 value="<%= typeof username !== 'undefined' && username ? username : '' %>" 
                 autofocus
+            >
+        </div>
+        <div class="form-group">
+            <input 
+                class="form-control" 
+                type="text" 
+                name="user[firstName]" 
+                placeholder="first name" 
+                value="<%= typeof firstName !== 'undefined' && firstName ? firstName : '' %>" 
+            >
+        </div>
+        <div class="form-group">
+            <input 
+                class="form-control" 
+                type="text" 
+                name="user[lastName]" 
+                placeholder="last name" 
+                value="<%= typeof lastName !== 'undefined' && lastName ? lastName : '' %>" 
+            >
+        </div>
+        <div class="form-group">
+            <input 
+                class="form-control" 
+                type="email" 
+                name="user[email]" 
+                placeholder="email" 
+                value="<%= typeof email !== 'undefined' && email ? email : '' %>" 
             >
         </div>
         <div class="form-group">
