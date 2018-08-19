@@ -7,7 +7,9 @@ const UserSchema = new mongoose.Schema({
     avatar: {type: String, default: 'https://www.esparkinfo.com/wp-content/uploads/2016/08/default-avatar.png'},
     firstName: String,
     lastName: String,
-    email: String,
+    email: {type: String, unique: true, required: true},
+    resetPasswordToken: String,
+    resetPasswordExpires: Date,
     isAdmin: {type: Boolean, default: false}
 });
 
