@@ -30,7 +30,6 @@ router.post('/register', (req, res) => {
 
     if (req.body.passwordVerify !== req.body.password) {
         req.flash('error', 'Passwords do not match. Please try again');
-        console.log(userProps);
         return res.redirect(url.format({
             pathname: '/register',
             query: userProps
@@ -49,8 +48,6 @@ router.post('/register', (req, res) => {
         }
         
         passport.authenticate('local')(req, res, () => {
-            console.log(user);
-            console.log(err);
             req.flash('success', `Welcome to Air-Quality ${user.isAdmin ? 'admin ' : ''}${user.username}`);
             res.redirect('/airports');
         });
