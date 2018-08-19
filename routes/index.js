@@ -24,18 +24,22 @@ router.get('/register', (req, res) => {
 
 // Handle sign up logic
 router.post('/register', (req, res) => {
+    const userProps = Object.assign({}, req.body);
+    delete userProps.password;
+    delete userProps.passwordVerify;
+
     if (req.body.passwordVerify !== req.body.password) {
         req.flash('error', 'Passwords do not match. Please try again');
-        const query = Object.assign({}, req.body.user);
-        console.log(req.body.user);
-        query.adminCode = req.body.adminCode;
+        console.log(userProps);
         return res.redirect(url.format({
             pathname: '/register',
-            query
+            query: userProps
         }));
     }
 
-    const newUser = new User(req.body.user);
+    delete userProps.adminCode;
+
+    const newUser = new User(userProps);
     if (req.body.adminCode === process.env.ADMIN_CODE) newUser.isAdmin = true;
 
     User.register(newUser, req.body.password, (err, user) => {
@@ -43,8 +47,10 @@ router.post('/register', (req, res) => {
             req.flash('error', err.message);
             return res.redirect('/register');
         }
-
+        
         passport.authenticate('local')(req, res, () => {
+            console.log(user);
+            console.log(err);
             req.flash('success', `Welcome to Air-Quality ${user.isAdmin ? 'admin ' : ''}${user.username}`);
             res.redirect('/airports');
         });
