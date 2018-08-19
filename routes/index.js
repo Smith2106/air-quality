@@ -95,11 +95,12 @@ router.get('/users/:id', (req, res) => {
     });
 });
 
-// Forgot password
+// Forgot password SHOW
 router.get('/forgot', (req, res) => {
-    res.render('forgot');
+    res.render('users/forgot');
 });
 
+// Forgot password POST
 router.post('/forgot', (req, res, next) => {
     async.waterfall([
         done => {
@@ -108,7 +109,7 @@ router.post('/forgot', (req, res, next) => {
                 done(err, token);
             });
         },
-        (err, token) => {
+        (token, done) => {
             User.findOne({ email: req.body.email }, (err, user) => {
                 if (!user) {
                     req.flash('error', 'No account with that email address exists.');
@@ -126,14 +127,14 @@ router.post('/forgot', (req, res, next) => {
             const smtpTransport = nodemailer.createTransport({
                 service: 'Gmail',
                 auth: {
-                    user: 'elijahs2106@gmail.com',
+                    user: process.env.GMAILUSR,
                     pass: process.env.GMAILPW
                 }
             });
 
             const mailOptions = {
                 to: user.email,
-                from: 'elijahs2106@gmail.com',
+                from: process.env.GMAILUSR,
                 subject: 'Air-Quality Password Reset',
                 text: 'You are recieving this email because a password reset was requested for an account registered under this email.' +
                     'Please click the following link, or paste it in your browser to reset your password.\n' +
@@ -149,6 +150,71 @@ router.post('/forgot', (req, res, next) => {
     ], (err) => {
         if (err) return next(err);
         res.redirect('/forgot');
+    });
+});
+
+// Reset password SHOW
+router.get('/reset/:token', (req, res) => {
+    User.findOne({ resetPasswordToken: req.params.token, resetPasswordExpires: { $gt: Date.now() } }, (err, user) => {
+        if (!user) {
+            req.flash('error', 'Password reset token is invalid or has expired.');
+            return res.redirect('/forgot');
+        }
+        res.render('users/reset', {token: req.params.token});
+    });
+});
+
+// Reset password POST
+router.post('/reset/:token', (req, res) => {
+    async.waterfall([
+        done => {
+            User.findOne({ resetPasswordToken: req.params.token, resetPasswordExpires: { $gt: Date.now() } }, (err, user) => {
+                if (!user) {
+                    req.flash('error', 'Password reset token is invalid or has expired.');
+                    return res.redirect('back');
+                }
+
+                if (req.body.password === req.body.confirm) {
+                    user.setPassword(req.body.password, err => {
+                        user.resetPasswordToken = undefined;
+                        user.resetPasswordExpires = undefined;
+
+                        user.save(err => {
+                            req.logIn(user, err => {
+                                done(err, user);
+                            });
+                        });
+                    });
+                }
+                else {
+                    req.flash('error', 'Passwords do not match.');
+                    return res.redirect('back');
+                }
+            });
+        },
+        (user, done) => {
+            const smtpTransport = nodemailer.createTransport({
+                service: 'Gmail',
+                auth: {
+                    user: process.env.GMAILUSR,
+                    pass: process.env.GMAILPW
+                }
+            });
+
+            const mailOptions = {
+                to: user.email,
+                from: process.env.GMAILUSR,
+                subject: 'Password Reset Successful',
+                text: 'Hello,\n\n' +
+                    `This email is to confirm that the password for your account ${user.email} has just changed.`
+            };
+            smtpTransport.sendMail(mailOptions, err => {
+                req.flash('success', 'Success! Your password has been changed.');
+                done(err);
+            });
+        }
+    ], err => {
+        res.redirect('/airports');
     });
 });
 
