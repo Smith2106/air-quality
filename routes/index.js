@@ -10,6 +10,8 @@ import smtpTransport from 'nodemailer-smtp-transport';
 import User from '../models/user';
 import Airport from '../models/airport';
 
+const emailSender = 'air.quality.team@gmail.com';
+
 // Root route
 router.get('/', (req, res) => {
     res.render('landing');
@@ -138,17 +140,17 @@ router.post('/forgot', (req, res, next) => {
         },
         (token, user, done) => {
             const smtpTransporter = nodemailer.createTransport(smtpTransport({
-                service: 'Gmail',
-                host: 'smtp.gmail.com',
+                service: 'SendGrid',
+                host: 'smtp.sendgrid.net',
                 auth: {
-                    user: process.env.GMAILUSR,
-                    pass: process.env.GMAILPW
+                    user: process.env.SENDGRIDUSR,
+                    pass: process.env.SENDGRIDPW
                 }
             }));
 
             const mailOptions = {
                 to: user.email,
-                from: process.env.GMAILUSR,
+                from: emailSender,
                 subject: 'Air-Quality Password Reset',
                 text: 'You are recieving this email because a password reset was requested for an account registered under this email.' +
                     'Please click the following link, or paste it in your browser to reset your password.\n' +
@@ -224,17 +226,17 @@ router.post('/reset/:token', (req, res) => {
         },
         (user, done) => {
             const smtpTransporter = nodemailer.createTransport(smtpTransport({
-                service: 'Gmail',
-                host: 'smtp.gmail.com',
+                service: 'SendGrid',
+                host: 'smtp.sendgrid.net',
                 auth: {
-                    user: process.env.GMAILUSR,
-                    pass: process.env.GMAILPW
+                    user: process.env.SENDGRIDUSR,
+                    pass: process.env.SENDGRIDPW
                 }
             }));
 
             const mailOptions = {
                 to: user.email,
-                from: process.env.GMAILUSR,
+                from: emailSender,
                 subject: 'Password Reset Successful',
                 text: 'Hello,\n\n' +
                     `This email is to confirm that the password for your account ${user.email} has just changed.`
