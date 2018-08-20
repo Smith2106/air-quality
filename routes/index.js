@@ -5,6 +5,7 @@ import url from 'url';
 import async from 'async';
 import nodemailer from 'nodemailer';
 import crypto from 'crypto';
+import smtpTransport from 'nodemailer-smtp-transport';
 
 import User from '../models/user';
 import Airport from '../models/airport';
@@ -126,13 +127,14 @@ router.post('/forgot', (req, res, next) => {
             });
         },
         (token, user, done) => {
-            const smtpTransport = nodemailer.createTransport({
+            const smtpTransporter = nodemailer.createTransport(smtpTransport({
                 service: 'Gmail',
+                host: 'smtp.gmail.com',
                 auth: {
                     user: process.env.GMAILUSR,
                     pass: process.env.GMAILPW
                 }
-            });
+            }));
 
             const mailOptions = {
                 to: user.email,
@@ -143,7 +145,7 @@ router.post('/forgot', (req, res, next) => {
                     'http://' + req.headers.host + '/reset/' + token + '\n\n' +
                     'If you did not request a password reset, please ignore this message.'
             };
-            smtpTransport.sendMail(mailOptions, (err) => {
+            smtpTransporter.sendMail(mailOptions, (err) => {
                 console.log('mail sent');
                 req.flash('success', `An e-mail has been sent to ${user.email} with further instructions.`);
                 done(err, 'done');
@@ -195,13 +197,14 @@ router.post('/reset/:token', (req, res) => {
             });
         },
         (user, done) => {
-            const smtpTransport = nodemailer.createTransport({
+            const smtpTransporter = nodemailer.createTransport(smtpTransport({
                 service: 'Gmail',
+                host: 'smtp.gmail.com',
                 auth: {
                     user: process.env.GMAILUSR,
                     pass: process.env.GMAILPW
                 }
-            });
+            }));
 
             const mailOptions = {
                 to: user.email,
@@ -210,7 +213,7 @@ router.post('/reset/:token', (req, res) => {
                 text: 'Hello,\n\n' +
                     `This email is to confirm that the password for your account ${user.email} has just changed.`
             };
-            smtpTransport.sendMail(mailOptions, err => {
+            smtpTransporter.sendMail(mailOptions, err => {
                 req.flash('success', 'Success! Your password has been changed.');
                 done(err);
             });
