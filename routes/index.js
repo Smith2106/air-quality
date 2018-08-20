@@ -108,6 +108,11 @@ router.post('/forgot', (req, res, next) => {
     async.waterfall([
         done => {
             crypto.randomBytes(20, (err, buf) => {
+                if (err) {
+                    req.flash('error', err.message);
+                    return res.redirect('back');
+                }
+
                 const token = buf.toString('hex');
                 done(err, token);
             });
@@ -117,6 +122,11 @@ router.post('/forgot', (req, res, next) => {
                 if (!user) {
                     req.flash('error', 'No account with that email address exists.');
                     return res.redirect('/forgot');
+                }
+
+                if (err) {
+                    req.flash('error', err.message);
+                    return res.redirect('back');
                 }
 
                 user.resetPasswordToken = token;
@@ -146,6 +156,11 @@ router.post('/forgot', (req, res, next) => {
                     'If you did not request a password reset, please ignore this message.'
             };
             smtpTransporter.sendMail(mailOptions, (err) => {
+                if (err) {
+                    req.flash('error', err.message);
+                    return res.redirect('back');
+                }
+
                 console.log('mail sent');
                 req.flash('success', `An e-mail has been sent to ${user.email} with further instructions.`);
                 done(err, 'done');
@@ -164,6 +179,12 @@ router.get('/reset/:token', (req, res) => {
             req.flash('error', 'Password reset token is invalid or has expired.');
             return res.redirect('/forgot');
         }
+
+        if (err) {
+            req.flash('error', err.message);
+            return res.redirect('back');
+        }
+
         res.render('users/reset', {token: req.params.token});
     });
 });
@@ -175,6 +196,11 @@ router.post('/reset/:token', (req, res) => {
             User.findOne({ resetPasswordToken: req.params.token, resetPasswordExpires: { $gt: Date.now() } }, (err, user) => {
                 if (!user) {
                     req.flash('error', 'Password reset token is invalid or has expired.');
+                    return res.redirect('back');
+                }
+
+                if (err) {
+                    req.flash('error', err.message);
                     return res.redirect('back');
                 }
 
@@ -214,11 +240,17 @@ router.post('/reset/:token', (req, res) => {
                     `This email is to confirm that the password for your account ${user.email} has just changed.`
             };
             smtpTransporter.sendMail(mailOptions, err => {
+                if (err) {
+                    req.flash('error', err.message);
+                    return res.redirect('back');
+                }
+
                 req.flash('success', 'Success! Your password has been changed.');
                 done(err);
             });
         }
     ], err => {
+        if (err) return next(err);
         res.redirect('/airports');
     });
 });
