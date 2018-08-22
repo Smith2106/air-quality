@@ -7,15 +7,34 @@ import moment from 'moment';
 
 // INDEX - show all aiports
 router.get('/', (req, res) => {
-    // Get all airports from the db
-    Airport.find({}, (err, airports) => {
-        if (err) {
-            console.log(err);
-        }
-        else {
-            res.render('airports/index', { airports, page: 'airports' });
-        }
-    });
+    if (req.query.search) {
+        const regex = new RegExp(escapeRegex(req.query.search), 'gi');
+        Airport.find({name: regex}, (err, airports) => {
+            if (err) {
+                req.flash('error', 'Something went wrong');
+                res.redirect('back');
+            }
+            else {
+                let noMatch;
+                if (airports.length < 1) {
+                    noMatch = "No airports to display from that search. Please, search another airport or create a new one.";
+                }
+                res.render('airports/index', { airports, page: 'airports', noMatch });
+            }
+        });
+    }
+    else {
+        // Get all airports from the db
+        Airport.find({}, (err, airports) => {
+            if (err) {
+                req.flash('error', 'Something went wrong');
+                res.redirect('back');
+            }
+            else {
+                res.render('airports/index', { airports, page: 'airports' });
+            }
+        });
+    }
 });
 
 // CREATE - add a new airport to DB
@@ -97,5 +116,9 @@ router.delete('/:id', middleware.checkAirportOwnership, (req, res) => {
         }
     });
 });
+
+function escapeRegex(text) {
+    return text.replace(/[-[\]{}()*+?.,\\^$!#\s]/g, "\\$&");
+}
 
 export default router;
