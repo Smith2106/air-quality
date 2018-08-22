@@ -7,6 +7,7 @@ import moment from 'moment';
 
 // INDEX - show all aiports
 router.get('/', (req, res) => {
+    let noMatch;
     if (req.query.search) {
         const regex = new RegExp(escapeRegex(req.query.search), 'gi');
         Airport.find({name: regex}, (err, airports) => {
@@ -15,7 +16,6 @@ router.get('/', (req, res) => {
                 res.redirect('back');
             }
             else {
-                let noMatch;
                 if (airports.length < 1) {
                     noMatch = "No airports to display from that search. Please, search another airport or create a new one.";
                 }
@@ -31,7 +31,7 @@ router.get('/', (req, res) => {
                 res.redirect('back');
             }
             else {
-                res.render('airports/index', { airports, page: 'airports' });
+                res.render('airports/index', { airports, page: 'airports', noMatch });
             }
         });
     }
