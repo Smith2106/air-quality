@@ -21,13 +21,12 @@
             </div>
         </header>
 
-        
-        <div class="row">
-            <div class="col-lg-12">
-                <h3>Popular Airports</h3>
-            </div>
-        </div>
         <div class="row text-center" style="display: flex; flex-wrap: wrap">
+            <div class="col-md-12">
+                <% if (typeof noMatch !== undefined && noMatch) { %>
+                    <h3><%= noMatch %></h3>
+                <% } %>
+            </div>
             <% airports.forEach(airport => { %>
                 <div class="col-md-3 col-sm-6">
                     <div class="thumbnail">
